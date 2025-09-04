@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pacific Digital Evolution Timeline - Fixed</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(180deg, #0a0a0a, #1a1a1a);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden;
+        color: #eee;
+        height: 100vh;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 20px;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        text-align: center;
+        padding: 20px 0;
+        z-index: 10;
+        position: relative;
+      }
+
+      h1 {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+        background: linear-gradient(to right, #00c2ff, #007bff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: #aaa;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .timeline-wrapper {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        perspective: 1000px;
+        margin-top: 20px;
+      }
+
+      .bg-stars {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 300%;
+        height: 100%;
+        background: url("https://www.transparenttextures.com/patterns/stardust.png");
+        background-size: 400px;
+        opacity: 0.25;
+        z-index: 0;
+        will-change: transform;
+      }
+
+      .timeline-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: 8px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.15);
+        z-index: 1;
+        overflow: hidden;
+      }
+
+      .timeline-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00c2ff, #007bff);
+        box-shadow: 0 0 12px rgba(0, 194, 255, 0.7);
+        transition: width 0.1s linear;
+      }
+
+      .timeline-container {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 200px;
+        position: relative;
+        will-change: transform;
+        z-index: 2;
+      }
+
+      .event {
+        position: relative;
+        flex: 0 0 700px;
+        margin: 0 80px;
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .event:hover {
+        transform: scale(1.08) translateY(-10px);
+      }
+
+      .event-icon {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #007bff, #0056b3);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+        font-size: 54px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        transition: all 0.3s ease;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .event:hover .event-icon {
+        transform: rotate(10deg) scale(1.1);
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.6);
+      }
+
+      .event-period {
+        font-weight: bold;
+        color: #00c2ff;
+        margin-top: 20px;
+        position: relative;
+        z-index: 2;
+        font-size: 26px;
+        text-shadow: 0 0 8px rgba(0, 194, 255, 0.6);
+      }
+
+      .event-card {
+        background: rgba(20, 20, 20, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        max-width: 500px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 17px;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .event:nth-child(odd) .event-card {
+        bottom: calc(50% + 200px);
+      }
+
+      .event:nth-child(even) .event-card {
+        top: calc(50% + 200px);
+      }
+
+      .event-title {
+        font-size: 20px;
+        color: #00c2ff;
+        margin-bottom: 12px;
+        font-weight: bold;
+      }
+
+      .event-description {
+        font-size: 16px;
+        color: #ddd;
+        margin-bottom: 10px;
+      }
+
+      .event-legal {
+        font-size: 14px;
+        color: #aaa;
+        font-style: italic;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 10px;
+        margin-top: 10px;
+      }
+
+      .scroll-hint {
+        text-align: center;
+        margin-top: 20px;
+        color: #00c2ff;
+        font-style: italic;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.7;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .island-selector {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .island-btn {
+        background: rgba(20, 20, 20, 0.7);
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: bold;
+        color: #00c2ff;
+        border: 2px solid #00c2ff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .island-btn.active {
+        background: rgba(0, 194, 255, 0.2);
+        box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
+      }
+
+      @media (max-width: 1200px) {
+        .timeline-container {
+          padding: 0 100px;
+        }
+
+        .event {
+          flex: 0 0 600px;
+          margin: 0 60px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+          padding: 0 15px;
+        }
+
+        .timeline-container {
+          padding: 0 50px;
+        }
+
+        .event {
+          flex: 0 0 500px;
+          margin: 0 40px;
+        }
+
+        .event-icon {
+          width: 80px;
+          height: 80px;
+          font-size: 36px;
+        }
+
+        .event-period {
+          font-size: 20px;
+        }
+
+        .event-card {
+          max-width: 400px;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Pacific Digital Evolution Timeline</h1>
+        <p class="subtitle">
+          From colonial administration to digital transformation in the Cook
+          Islands, Niue, and Tokelau
+        </p>
+      </header>
+
+      <div class="island-selector">
+        <div class="island-btn active">All Islands</div>
+        <div class="island-btn">Cook Islands</div>
+        <div class="island-btn">Niue</div>
+        <div class="island-btn">Tokelau</div>
+      </div>
+
+      <div class="scroll-hint">
+        <i class="fas fa-arrows-left-right"></i> Scroll horizontally to navigate
+        the timeline
+      </div>
+
+      <div class="timeline-wrapper">
+        <div class="bg-stars" id="bg"></div>
+        <div class="timeline-line">
+          <div class="timeline-progress" id="progress"></div>
+        </div>
+        <div class="timeline-container" id="timeline">
+          <div class="event">
+            <div class="event-icon">🚢</div>
+            <div class="event-period">Pre-1960s</div>
+            <div class="event-card">
+              <div class="event-title">Colonial Administration Era</div>
+              <p class="event-description">
+                Cook Islands, Niue, and Tokelau under NZ's administration with
+                limited communication technology.
+              </p>
+              <p class="event-legal">
+                NZ laws applied as governance foundation
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">📡</div>
+            <div class="event-period">1960s–1970s</div>
+            <div class="event-card">
+              <div class="event-title">Early Communication Infrastructure</div>
+              <p class="event-description">
+                Introduction of basic telecommunication services including radio
+                broadcasting and limited telephone networks.
+              </p>
+              <p class="event-legal">
+                NZ Post Office Act governed telecommunications
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">💻</div>
+            <div class="event-period">1980s–1990s</div>
+            <div class="event-card">
+              <div class="event-title">Computerization Begins</div>
+              <p class="event-description">
+                First computers introduced in government offices and educational
+                institutions. Initial steps toward digital record-keeping.
+              </p>
+              <p class="event-legal">
+                NZ Copyright Act 1994 addressed digital copyright
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🌐</div>
+            <div class="event-period">2000s</div>
+            <div class="event-card">
+              <div class="event-title">Internet Connectivity Arrives</div>
+              <p class="event-description">
+                Dial-up internet access became available, mobile networks
+                expanded, and first internet cafes appeared.
+              </p>
+              <p class="event-legal">
+                NZ Telecommunications Act 2001, HDCA 2015
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">📱</div>
+            <div class="event-period">2010s</div>
+            <div class="event-card">
+              <div class="event-title">Mobile Revolution</div>
+              <p class="event-description">
+                Mobile phone ownership expanded rapidly. Social media platforms
+                became popular for communication.
+              </p>
+              <p class="event-legal">
+                Privacy Act 2020 protected online information
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🤖</div>
+            <div class="event-period">2020s</div>
+            <div class="event-card">
+              <div class="event-title">Digital Transformation Era</div>
+              <p class="event-description">
+                Broadband expansion, digital government services, and increased
+                focus on digital literacy.
+              </p>
+              <p class="event-legal">
+                Cook Islands National Digital Strategy 2024-2030
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🛰️</div>
+            <div class="event-period">2025-2030</div>
+            <div class="event-card">
+              <div class="event-title">Satellite Internet Expansion</div>
+              <p class="event-description">
+                Leveraging LEO satellite constellations to provide high-speed
+                internet across remote islands.
+              </p>
+              <p class="event-legal">Pacific Digital Connectivity Initiative</p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🔒</div>
+            <div class="event-period">2030-2035</div>
+            <div class="event-card">
+              <div class="event-title">Cybersecurity Infrastructure</div>
+              <p class="event-description">
+                Development of regional cybersecurity centers and implementation
+                of advanced protection measures.
+              </p>
+              <p class="event-legal">
+                Pacific Cyber Security Alliance Framework
+              </p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🌊</div>
+            <div class="event-period">2035-2040</div>
+            <div class="event-card">
+              <div class="event-title">Climate Tech & Digital Monitoring</div>
+              <p class="event-description">
+                Implementation of digital systems for climate monitoring,
+                disaster prediction, and environmental protection.
+              </p>
+              <p class="event-legal">Pacific Climate Resilience Act</p>
+            </div>
+          </div>
+          <div class="event">
+            <div class="event-icon">🧠</div>
+            <div class="event-period">2040+</div>
+            <div class="event-card">
+              <div class="event-title">
+                AI Integration & Digital Sovereignty
+              </div>
+              <p class="event-description">
+                Full integration of AI in governance and establishment of data
+                sovereignty frameworks for Pacific nations.
+              </p>
+              <p class="event-legal">Pacific AI Ethics Charter</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const timeline = document.getElementById("timeline");
+      const bg = document.getElementById("bg");
+      const progress = document.getElementById("progress");
+      const islandBtns = document.querySelectorAll(".island-btn");
+
+      let scrollX = 0;
+      let velocity = 0;
+      let isDragging = false;
+      let startX = 0;
+      let maxScroll = 0;
+
+      // Calculate the maximum scroll position
+      function calculateMaxScroll() {
+        maxScroll = Math.max(0, timeline.scrollWidth - window.innerWidth);
+        return maxScroll;
+      }
+
+      // Initialize and recalculate on resize
+      calculateMaxScroll();
+      window.addEventListener("resize", calculateMaxScroll);
+
+      // Minimal bounce effect
+      const bounceLimit = 50;
+      const bounceStrength = 0.15;
+
+      function animate() {
+        // Apply velocity
+        scrollX += velocity;
+
+        // Apply friction
+        velocity *= 0.87;
+
+        // Stop animation if velocity is very small
+        if (Math.abs(velocity) < 0.1) {
+          velocity = 0;
+        }
+
+        const currentMaxScroll = calculateMaxScroll();
+
+        // Apply boundaries with minimal bounce
+        if (scrollX < 0) {
+          scrollX = scrollX * 0.8;
+          velocity = -velocity * 0.5;
+        } else if (scrollX > currentMaxScroll) {
+          const overshoot = scrollX - currentMaxScroll;
+          scrollX = currentMaxScroll + overshoot * 0.8;
+          velocity = -velocity * 0.5;
+        }
+
+        // Update visuals
+        timeline.style.transform = `translateX(${-scrollX}px)`;
+        bg.style.transform = `translateX(${-scrollX * 0.3}px)`;
+
+        // Update progress bar (clamped between 0 and 100%)
+        const clampedScroll = Math.min(Math.max(scrollX, 0), currentMaxScroll);
+        const progressPercent =
+          currentMaxScroll > 0 ? (clampedScroll / currentMaxScroll) * 100 : 0;
+        progress.style.width = `${progressPercent}%`;
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // Mouse wheel scrolling
+      window.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          velocity += e.deltaY * 1.2;
+        },
+        { passive: false }
+      );
+
+      // Touch events for mobile
+      timeline.addEventListener("touchstart", (e) => {
+        isDragging = true;
+        startX = e.touches[0].clientX - scrollX;
+        velocity = 0;
+      });
+
+      timeline.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.touches[0].clientX;
+        scrollX = x - startX;
+      });
+
+      timeline.addEventListener("touchend", () => {
+        isDragging = false;
+
+        // Ensure we don't end up beyond boundaries
+        const currentMaxScroll = calculateMaxScroll();
+        if (scrollX < 0) {
+          scrollX = 0;
+          velocity = 0;
+        } else if (scrollX > currentMaxScroll) {
+          scrollX = currentMaxScroll;
+          velocity = 0;
+        }
+      });
+
+      // Mouse drag for desktop
+      timeline.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX - scrollX;
+        velocity = 0;
+        timeline.style.cursor = "grabbing";
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const x = e.clientX;
+        scrollX = x - startX;
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+        timeline.style.cursor = "grab";
+
+        // Ensure we don't end up beyond boundaries
+        const currentMaxScroll = calculateMaxScroll();
+        if (scrollX < 0) {
+          scrollX = 0;
+          velocity = 0;
+        } else if (scrollX > currentMaxScroll) {
+          scrollX = currentMaxScroll;
+          velocity = 0;
+        }
+      });
+
+      // Island filter buttons
+      islandBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          islandBtns.forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+        });
+      });
+    </script>
+  </body>
+</html>
