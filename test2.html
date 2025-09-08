@@ -42,10 +42,10 @@
         font-size: 2.8rem;
         margin-bottom: 10px;
         background: linear-gradient(to right, #00c2ff, #007bff);
-        background-clip: text; /* standard */
+        background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        color: transparent; /* non-webkit fallback */
+        color: transparent;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
       }
 
@@ -79,7 +79,6 @@
         box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
       }
 
-      /* Orientation toggle */
       .orientation-toggle {
         display: flex;
         justify-content: center;
@@ -143,7 +142,7 @@
         background: rgba(255, 255, 255, 0.15);
         z-index: 1;
         overflow: hidden;
-        pointer-events: none; /* do not block clicks */
+        pointer-events: none;
       }
 
       .timeline-progress {
@@ -283,7 +282,6 @@
         text-decoration: underline;
       }
 
-      /* Truncation and read more */
       .event-description.clamp {
         display: -webkit-box;
         -webkit-line-clamp: 3;
@@ -332,6 +330,7 @@
         justify-content: center;
         gap: 15px;
         margin: 20px 0;
+        flex-wrap: wrap;
       }
 
       .island-btn {
@@ -386,17 +385,25 @@
       }
 
       @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
         .timeline-container {
-          padding: 0 40px;
+          padding: 0 20px;
         }
 
         .event {
-          flex: 0 0 400px;
-          margin: 0 40px;
+          flex: 0 0 300px;
+          margin: 0 20px;
         }
 
         .event-card {
-          width: 320px;
+          width: 280px;
           padding: 15px;
         }
 
@@ -410,11 +417,24 @@
           width: 90%;
           max-width: 320px;
         }
+
+        .island-btn {
+          padding: 8px 16px;
+          font-size: 0.9rem;
+        }
+
+        .event-icon {
+          width: 80px;
+          height: 80px;
+          font-size: 36px;
+        }
+
+        .event-period {
+          font-size: 18px;
+        }
       }
 
-      /* ============================= */
-      /* Vertical mode overrides       */
-      /* ============================= */
+      /* Vertical mode overrides */
       .vertical-mode .timeline-line {
         top: 0;
         left: 50%;
@@ -433,22 +453,13 @@
       }
 
       .vertical-mode .timeline-container {
-        /* Responsive variables */
-        --center-gap: clamp(
-          180px,
-          18vw,
-          420px
-        ); /* responsive horizontal gap from center to card; larger on ultrawide */
-        --event-gap: clamp(
-          700px,
-          max(120vh, 90vw),
-          2600px
-        ); /* responsive vertical distance between events */
-        --icon-radius: 53px; /* icon 100px + 3px border -> ~53px radius */
+        --center-gap: clamp(180px, 18vw, 420px);
+        --event-gap: clamp(400px, 50vh, 800px);
+        --icon-radius: 53px;
         flex-direction: column;
         align-items: center;
         height: auto;
-        padding: clamp(240px, 24vh, 520px) 0; /* extra top/bottom space so first/last cards aren't clipped */
+        padding: clamp(120px, 12vh, 240px) 0;
       }
 
       .vertical-mode .timeline-scroll-container {
@@ -459,29 +470,24 @@
       .vertical-mode .event {
         position: relative;
         flex: 0 0 auto;
-        margin: var(--event-gap) 0; /* responsive vertical distance for more scrolling */
-        padding-block: clamp(
-          120px,
-          10vh,
-          220px
-        ); /* inner clearance to avoid clipping when cards expand */
+        margin: var(--event-gap) 0;
+        padding-block: clamp(80px, 8vh, 160px);
         text-align: center;
         display: flex;
         flex-direction: column;
-        align-items: center; /* center on middle line */
-        width: 100%; /* ensure absolute-positioned cards can align to page center */
+        align-items: center;
+        width: 100%;
+        min-height: 200px;
       }
 
       .vertical-mode .event-card {
         position: absolute;
-        /* Top will be set dynamically to the icon center via JS for perfect alignment */
         transform: translateY(-50%);
         width: clamp(260px, 40vw, 560px);
         opacity: 1;
         visibility: visible;
-        z-index: 30; /* above timeline line and icons */
+        z-index: 30;
         pointer-events: auto;
-        /* Reset any inherited horizontal centering from base rules */
         left: auto;
         right: auto;
         max-height: none;
@@ -489,32 +495,23 @@
       }
 
       .vertical-mode .event:nth-child(odd) .event-card {
-        right: auto;
-        left: calc(50% + var(--center-gap)); /* right side, clear icon */
-        transform: translateY(-50%); /* keep vertical centering */
+        left: calc(50% + var(--center-gap));
         text-align: left;
       }
 
       .vertical-mode .event:nth-child(even) .event-card {
-        right: auto;
+        right: calc(50% + var(--center-gap));
+        text-align: right;
         left: auto;
-        transform: translate(-100%, -50%);
-        margin-left: -20px; /* give a little offset so it's not flush */
-        text-align: left;
-
-        /* NEW: ensure container can grow wide enough */
-        max-width: clamp(260px, 40vw, 560px);
-        min-width: 260px;
+        transform: translateY(-50%);
       }
 
-      /* keep icon and period centered on the middle timeline */
       .vertical-mode .event .event-icon,
       .vertical-mode .event .event-period {
         margin-left: auto;
         margin-right: auto;
       }
 
-      /* Date above icon on the center line */
       .vertical-mode .event .event-period {
         order: 0;
         margin-bottom: 12px;
@@ -524,7 +521,6 @@
         order: 1;
       }
 
-      /* connector line from icon to card - draw from icon center so it's perfectly centered */
       .vertical-mode .event .event-icon::after {
         content: "";
         position: absolute;
@@ -537,15 +533,52 @@
       }
 
       .vertical-mode .event:nth-child(odd) .event-icon::after {
-        left: calc(
-          50% + var(--icon-radius)
-        ); /* start just outside the icon edge to the right */
+        left: calc(50% + var(--icon-radius));
       }
 
       .vertical-mode .event:nth-child(even) .event-icon::after {
-        right: calc(
-          50% + var(--icon-radius)
-        ); /* start just outside the icon edge to the left */
+        right: calc(50% + var(--icon-radius));
+      }
+
+      @media (max-width: 1024px) {
+        .vertical-mode .event-card {
+          width: clamp(240px, 35vw, 400px);
+        }
+
+        .vertical-mode .event:nth-child(odd) .event-card {
+          left: calc(50% + 120px);
+        }
+
+        .vertical-mode .event:nth-child(even) .event-card {
+          right: calc(50% + 120px);
+        }
+
+        .vertical-mode .event .event-icon::after {
+          width: calc(120px - var(--icon-radius));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .vertical-mode .event-card {
+          position: fixed;
+          bottom: 20px;
+          top: auto;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 90%;
+          max-width: 320px;
+        }
+
+        .vertical-mode .event:nth-child(odd) .event-card,
+        .vertical-mode .event:nth-child(even) .event-card {
+          left: 50%;
+          right: auto;
+          text-align: left;
+        }
+
+        .vertical-mode .event .event-icon::after {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -595,20 +628,88 @@
     </div>
 
     <script>
-      let timelineData = [];
-
-      fetch("data.json")
-        .then((response) => response.json())
-        .then((data) => {
-          timelineData = data.timelineData;
-          console.log(timelineData);
-          initTimeline();
-        })
-        .catch((error) => {
-          console.error("Error loading timeline data:", error);
-          timeline.innerHTML =
-            '<div class="loading">Error loading timeline data. Please try again later.</div>';
-        });
+      // Timeline data - using a sample for demonstration
+      const timelineData = {
+        timelineData: [
+          {
+            period: "1901-1950",
+            icon: '<i class="fas fa-crown"></i>',
+            title: "Colonial Administration",
+            description:
+              "During this period, the Cook Islands, Niue, and Tokelau were under New Zealand administration. Communication was limited to traditional methods and basic telegraph systems. Infrastructure development was minimal, focusing primarily on administrative needs rather than public services.",
+            legal:
+              "New Zealand assumed administrative control through various acts of parliament.",
+            reference: "#",
+            islands: ["cook", "niue", "tokelau"],
+          },
+          {
+            period: "1950s-1960s",
+            icon: '<i class="fas fa-radio"></i>',
+            title: "Radio Communication",
+            description:
+              "Introduction of radio communication systems for administrative and emergency purposes. This technology significantly improved communication between islands and with New Zealand. Radio stations were established in each territory, providing news and information to the public.",
+            legal:
+              "Communication systems were government-controlled and operated.",
+            reference: "#",
+            islands: ["cook", "niue", "tokelau"],
+          },
+          {
+            period: "1970s-1980s",
+            icon: '<i class="fas fa-phone"></i>',
+            title: "Telephone Services",
+            description:
+              "Basic telephone services were introduced, initially for government use and later expanding to the public. This period saw the establishment of the first telephone exchanges and the beginning of a more connected society across the islands.",
+            legal:
+              "Telecommunications were managed by New Zealand Post Office initially.",
+            reference: "#",
+            islands: ["cook", "niue"],
+          },
+          {
+            period: "1990s",
+            icon: '<i class="fas fa-satellite"></i>',
+            title: "Satellite Communication",
+            description:
+              "Satellite technology improved connectivity, enabling better international communication and the first internet connections. This era marked the beginning of digital transformation with the introduction of email and basic online services.",
+            legal:
+              "Telecommunications sector reforms began in the Pacific region.",
+            reference: "#",
+            islands: ["cook", "niue", "tokelau"],
+          },
+          {
+            period: "2000s",
+            icon: '<i class="fas fa-laptop"></i>',
+            title: "Internet Access",
+            description:
+              "Commercial internet services became available, leading to the establishment of cybercafés and later home internet connections. This decade saw the first websites dedicated to Pacific Island news and services.",
+            legal:
+              "Various telecommunications acts established regulatory frameworks.",
+            reference: "#",
+            islands: ["cook", "niue"],
+          },
+          {
+            period: "2010s",
+            icon: '<i class="fas fa-mobile-alt"></i>',
+            title: "Mobile Revolution",
+            description:
+              "Mobile networks expanded rapidly, with 3G and later 4G services becoming available. Smartphone adoption increased dramatically, changing how people communicate and access information.",
+            legal:
+              "Competition in telecommunications markets increased accessibility.",
+            reference: "#",
+            islands: ["cook", "niue"],
+          },
+          {
+            period: "2020s",
+            icon: '<i class="fas fa-cloud"></i>',
+            title: "Digital Transformation",
+            description:
+              "Focus on digital government services, online education, and e-commerce. The COVID-19 pandemic accelerated digital adoption, with increased reliance on digital platforms for work, education, and social connection.",
+            legal:
+              "Data protection and digital sovereignty issues gained prominence.",
+            reference: "#",
+            islands: ["cook", "niue", "tokelau"],
+          },
+        ],
+      };
 
       // DOM elements
       const timeline = document.getElementById("timeline");
@@ -624,7 +725,7 @@
 
       // Variables
       let events = [];
-      let orientation = "vertical"; // "vertical" | "horizontal"
+      let orientation = "vertical";
       let scrollX = 0;
       let scrollY = 0;
       let velocity = 0;
@@ -636,6 +737,8 @@
       let zoomLevel = 1.0;
       let rafId = null;
       let lastScrollTime = 0;
+      let resizeObservers = [];
+      let mutationObservers = [];
 
       // Initialize the timeline
       function initTimeline() {
@@ -643,7 +746,7 @@
         timeline.innerHTML = "";
 
         // Create event elements from data
-        timelineData.forEach((eventData) => {
+        timelineData.timelineData.forEach((eventData) => {
           const eventElement = document.createElement("div");
           eventElement.className = "event";
           eventElement.setAttribute(
@@ -653,30 +756,30 @@
 
           // Build card with truncation and read more
           const fullDesc = eventData.description || "";
-          const shouldClamp = fullDesc.length > 220; // heuristic
+          const shouldClamp = fullDesc.length > 220;
           const clampedClass = shouldClamp ? "clamp" : "";
 
           eventElement.innerHTML = `
-                    <div class="event-icon">${eventData.icon}</div>
-                    <div class="event-period">${eventData.period}</div>
-                    <div class="event-card">
-                        <div class="event-title">${eventData.title}</div>
-                        <p class="event-description ${clampedClass}">${fullDesc}</p>
-                        ${
-                          shouldClamp
-                            ? '<button class="read-more-btn" type="button">Read more</button>'
-                            : ""
-                        }
-                        <a href="${
-                          eventData.reference
-                        }" target="_blank" class="event-reference">
-                            <i class="fas fa-external-link-alt"></i> Reference
-                        </a>
-                        <p class="event-legal ${shouldClamp ? "hidden" : ""}">${
+            <div class="event-icon">${eventData.icon}</div>
+            <div class="event-period">${eventData.period}</div>
+            <div class="event-card">
+              <div class="event-title">${eventData.title}</div>
+              <p class="event-description ${clampedClass}">${fullDesc}</p>
+              ${
+                shouldClamp
+                  ? '<button class="read-more-btn" type="button">Read more</button>'
+                  : ""
+              }
+              <a href="${
+                eventData.reference
+              }" target="_blank" class="event-reference">
+                <i class="fas fa-external-link-alt"></i> Reference
+              </a>
+              <p class="event-legal ${shouldClamp ? "hidden" : ""}">${
             eventData.legal
           }</p>
-                    </div>
-                `;
+            </div>
+          `;
 
           timeline.appendChild(eventElement);
         });
@@ -743,8 +846,6 @@
             const x = e.touches[0].clientX;
             scrollX = x - startX;
             scrollContainer.scrollLeft = scrollX;
-          } else {
-            // let native vertical scrolling happen
           }
         });
 
@@ -875,8 +976,6 @@
             }
           }
         });
-
-        // Update zoom level display
 
         // Adjust timeline container scale (only in horizontal mode for now)
         if (orientation === "horizontal") {
@@ -1058,6 +1157,8 @@
 
       // Align each event card's vertical center to its icon center in vertical mode
       function alignCardsVertically() {
+        if (orientation !== "vertical") return;
+
         document.querySelectorAll(".vertical-mode .event").forEach((ev) => {
           const card = ev.querySelector(".event-card");
           const icon = ev.querySelector(".event-icon");
@@ -1074,7 +1175,7 @@
           card.style.top = iconCenter + "px";
 
           // Ensure container fully contains the card
-          ev.style.minHeight = cardHeight + 120 + "px"; // add breathing room
+          ev.style.minHeight = cardHeight + 120 + "px";
         });
       }
 
@@ -1087,9 +1188,7 @@
         });
       }
 
-      // Observe size/content changes to keep cards aligned (handles Read more on left)
-      let resizeObservers = [];
-      let mutationObservers = [];
+      // Observe size/content changes to keep cards aligned
       function setupAlignmentObservers() {
         // Clean up existing observers
         resizeObservers.forEach((ro) => ro.disconnect());
@@ -1097,8 +1196,8 @@
         resizeObservers = [];
         mutationObservers = [];
 
+        if (orientation !== "vertical") return;
         if (!("ResizeObserver" in window)) {
-          // Fallback: schedule alignment anyway
           scheduleAlign();
           return;
         }
@@ -1114,7 +1213,7 @@
           ro.observe(card);
           resizeObservers.push(ro);
 
-          // Mutation observer for content changes inside the card (e.g., Read more)
+          // Mutation observer for content changes inside the card
           const mo = new MutationObserver(() => scheduleAlign());
           mo.observe(card, {
             childList: true,
@@ -1125,8 +1224,8 @@
         });
       }
 
-      // Initialize the timeline
-      initTimeline();
+      // Initialize the timeline when the DOM is loaded
+      document.addEventListener("DOMContentLoaded", initTimeline);
     </script>
   </body>
 </html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pacific Islands Timeline</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #0a0e17;
+        color: #e0e6ed;
+        padding: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 30px 20px;
+        background-color: #0f172a;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        color: #e2e8f0;
+        margin-bottom: 15px;
+        font-size: 2.8rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .subtitle {
+        color: #94a3b8;
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+      }
+
+      .filters {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      .filter-btn {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 8px;
+        background-color: #1e293b;
+        color: #cbd5e1;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        font-size: 1.1rem;
+      }
+
+      .filter-btn:hover {
+        background-color: #2d3748;
+        transform: translateY(-2px);
+      }
+
+      .filter-btn.active {
+        background-color: #3498db;
+        color: white;
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+      }
+
+      .timeline-container {
+        position: relative;
+        padding: 80px 0;
+        min-height: 600px;
+        width: 100%;
+      }
+
+      .timeline {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 10px;
+        background-color: #2d3748;
+        transform: translateX(-50%);
+        border-radius: 10px;
+        z-index: 1;
+      }
+
+      .timeline-progress {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 0%;
+        background-color: #3498db;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(52, 152, 219, 0.7);
+        transition: height 0.1s linear;
+        z-index: 2;
+      }
+
+      .timeline-events {
+        position: relative;
+        z-index: 3;
+      }
+
+      .timeline-event {
+        position: relative;
+        margin-bottom: 120px;
+        display: flex;
+        justify-content: center;
+        opacity: 0.6;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+        width: 100%;
+      }
+
+      .timeline-event.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .timeline-event-content {
+        width: 42%;
+        background-color: #1e293b;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #334155;
+      }
+
+      .timeline-event.active .timeline-event-content {
+        box-shadow: 0 15px 30px rgba(52, 152, 219, 0.4);
+        border-color: #3498db;
+      }
+
+      .timeline-event-content:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+      }
+
+      .timeline-event:nth-child(odd) .timeline-event-content {
+        margin-left: auto;
+      }
+
+      .timeline-event:nth-child(even) .timeline-event-content {
+        margin-right: auto;
+      }
+
+      .timeline-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        z-index: 4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .event-period {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: inline-block;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        min-width: 150px;
+      }
+
+      .event-icon {
+        width: 90px;
+        height: 90px;
+        background-color: #0f172a;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        border: 5px solid #3498db;
+        transition: all 0.3s ease;
+      }
+
+      .timeline-event.active .event-icon {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px rgba(52, 152, 219, 0.8);
+      }
+
+      .event-title {
+        font-size: 26px;
+        margin-bottom: 20px;
+        color: #e2e8f0;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #334155;
+      }
+
+      .event-description {
+        color: #cbd5e1;
+        line-height: 1.7;
+        margin-bottom: 25px;
+        font-size: 17px;
+      }
+
+      .read-more {
+        color: #3498db;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      .read-more:hover {
+        text-decoration: underline;
+      }
+
+      .event-legal {
+        border-top: 2px solid #334155;
+        padding-top: 20px;
+        margin-top: 20px;
+        color: #94a3b8;
+        font-style: italic;
+        font-size: 16px;
+      }
+
+      .event-reference {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 20px;
+        padding: 12px 24px;
+        background-color: #3498db;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .event-reference i {
+        margin-right: 10px;
+      }
+
+      .event-reference:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Connector lines */
+      .timeline-event::after {
+        content: "";
+        position: absolute;
+        top: 90px;
+        width: 50px;
+        height: 4px;
+        background-color: #3498db;
+        z-index: 2;
+      }
+
+      .timeline-event:nth-child(odd)::after {
+        left: calc(50% - 50px);
+      }
+
+      .timeline-event:nth-child(even)::after {
+        right: calc(50% - 50px);
+      }
+
+      .loading {
+        text-align: center;
+        font-size: 22px;
+        padding: 60px;
+        color: #94a3b8;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #0f172a;
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 10px;
+      }
+
+      /* Responsive design */
+      @media (max-width: 1200px) {
+        .timeline-event-content {
+          width: 45%;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .timeline-event-content {
+          width: 50%;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .timeline {
+          left: 40px;
+        }
+
+        .timeline-event-content {
+          width: calc(85% - 100px);
+          margin-left: 100px !important;
+          margin-right: 0 !important;
+        }
+
+        .timeline-center {
+          left: 40px;
+          transform: translateX(0);
+        }
+
+        .timeline-event::after {
+          left: 40px;
+          width: 30px;
+        }
+
+        .timeline-event:nth-child(even)::after {
+          right: auto;
+          left: 40px;
+        }
+
+        .filters {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .filter-btn {
+          width: 220px;
+        }
+
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        .event-icon {
+          width: 70px;
+          height: 70px;
+          font-size: 30px;
+        }
+
+        .event-period {
+          font-size: 16px;
+          padding: 8px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Pacific Islands History Timeline</h1>
+        <p class="subtitle">
+          Explore the rich history and cultural heritage of the Pacific Islands
+        </p>
+        <div class="filters">
+          <button class="filter-btn active" data-filter="all">
+            All Islands
+          </button>
+          <button class="filter-btn" data-filter="Cook Islands">
+            Cook Islands
+          </button>
+          <button class="filter-btn" data-filter="Niue">Niue</button>
+          <button class="filter-btn" data-filter="Tokelau">Tokelau</button>
+        </div>
+      </header>
+
+      <div class="timeline-container">
+        <div class="timeline">
+          <div class="timeline-progress" id="timeline-progress"></div>
+        </div>
+        <div class="timeline-events" id="timeline">
+          <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Loading timeline data...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const timelineContainer = document.getElementById("timeline");
+        const timelineProgress = document.getElementById("timeline-progress");
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        let timelineData = [];
+        let currentEvents = [];
+
+        // Fetch data from data.json
+        fetch("data.json")
+          .then((response) => response.json())
+          .then((data) => {
+            timelineData = data.timelineData;
+            console.log("Timeline data loaded:", timelineData);
+            initTimeline();
+            setupScrollListener();
+          })
+          .catch((error) => {
+            console.error("Error loading timeline data:", error);
+            timelineContainer.innerHTML =
+              '<div class="loading">Error loading timeline data. Please try again later.</div>';
+          });
+
+        // Function to initialize the timeline with all data
+        function initTimeline() {
+          generateTimelineEvents();
+
+          // Add event listeners to filter buttons
+          filterButtons.forEach((button) => {
+            button.addEventListener("click", function () {
+              filterButtons.forEach((btn) => btn.classList.remove("active"));
+              this.classList.add("active");
+
+              const filter = this.dataset.filter;
+              generateTimelineEvents(filter);
+            });
+          });
+        }
+
+        // Function to generate timeline events
+        function generateTimelineEvents(filter = "all") {
+          timelineContainer.innerHTML = "";
+
+          // Show loading state while filtering
+          if (timelineData.length === 0) {
+            timelineContainer.innerHTML =
+              '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading data...</div>';
+            return;
+          }
+
+          const filteredData =
+            filter === "all"
+              ? timelineData
+              : timelineData.filter((event) => event.islands.includes(filter));
+
+          if (filteredData.length === 0) {
+            timelineContainer.innerHTML =
+              '<div class="loading">No events found for the selected filter.</div>';
+            return;
+          }
+
+          currentEvents = [];
+
+          filteredData.forEach((event, index) => {
+            const eventElement = document.createElement("div");
+            eventElement.className = "timeline-event";
+            eventElement.dataset.islands = event.islands.join(",");
+            eventElement.id = `event-${index}`;
+
+            // Create the center element with period and icon
+            const centerElement = document.createElement("div");
+            centerElement.className = "timeline-center";
+
+            const periodElement = document.createElement("div");
+            periodElement.className = "event-period";
+            periodElement.textContent = event.period;
+
+            const iconElement = document.createElement("div");
+            iconElement.className = "event-icon";
+            iconElement.innerHTML = event.icon;
+
+            centerElement.appendChild(periodElement);
+            centerElement.appendChild(iconElement);
+
+            // Create the content card
+            const contentElement = document.createElement("div");
+            contentElement.className = "timeline-event-content";
+
+            const titleElement = document.createElement("h3");
+            titleElement.className = "event-title";
+            titleElement.textContent = event.title;
+
+            const descriptionElement = document.createElement("p");
+            descriptionElement.className = "event-description";
+
+            // Truncate description with read more functionality
+            const maxLength = 150;
+            if (event.description.length > maxLength) {
+              const truncatedDesc = event.description.substring(0, maxLength);
+              descriptionElement.innerHTML = `${truncatedDesc}... <span class="read-more">Read more</span>`;
+
+              const readMoreSpan =
+                descriptionElement.querySelector(".read-more");
+              readMoreSpan.addEventListener("click", function () {
+                descriptionElement.innerHTML = `${event.description} <span class="read-more">Read less</span>`;
+
+                const readLessSpan =
+                  descriptionElement.querySelector(".read-more");
+                readLessSpan.addEventListener("click", function () {
+                  descriptionElement.innerHTML = `${truncatedDesc}... <span class="read-more">Read more</span>`;
+                  attachReadMoreListener(readMoreSpan);
+                });
+              });
+            } else {
+              descriptionElement.textContent = event.description;
+            }
+
+            const legalElement = document.createElement("p");
+            legalElement.className = "event-legal";
+            legalElement.textContent = event.legal;
+
+            const referenceElement = document.createElement("a");
+            referenceElement.className = "event-reference";
+            referenceElement.href = event.reference;
+            referenceElement.target = "_blank";
+            referenceElement.innerHTML =
+              '<i class="fas fa-external-link-alt"></i> Reference';
+
+            contentElement.appendChild(titleElement);
+            contentElement.appendChild(descriptionElement);
+            contentElement.appendChild(legalElement);
+            contentElement.appendChild(referenceElement);
+
+            eventElement.appendChild(centerElement);
+            eventElement.appendChild(contentElement);
+
+            timelineContainer.appendChild(eventElement);
+            currentEvents.push(eventElement);
+
+            // Add fade-in animation with delay
+            setTimeout(() => {
+              eventElement.classList.add("active");
+            }, 100 * index);
+          });
+        }
+
+        // Function to setup scroll listener for progress and event highlighting
+        function setupScrollListener() {
+          window.addEventListener("scroll", function () {
+            const timelineContainer = document.querySelector(
+              ".timeline-container"
+            );
+            if (!timelineContainer) return;
+
+            const timelineRect = timelineContainer.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const triggerPoint = windowHeight / 2;
+
+            // Calculate progress based on the container's top relative to the trigger point
+            const scrollDistance = triggerPoint - timelineRect.top;
+            const totalScrollHeight = timelineRect.height;
+
+            const scrollPercent = Math.max(
+              0,
+              Math.min(1, scrollDistance / totalScrollHeight)
+            );
+
+            // Update progress bar
+            timelineProgress.style.height = `${scrollPercent * 100}%`;
+
+            // Highlight events based on scroll position
+            highlightActiveEvent(scrollPercent);
+          });
+        }
+
+        // Function to highlight the active event based on scroll position
+        function highlightActiveEvent(scrollPercent) {
+          if (currentEvents.length === 0) return;
+
+          const eventCount = currentEvents.length;
+          const activeIndex = Math.min(
+            eventCount - 1,
+            Math.floor(scrollPercent * eventCount)
+          );
+
+          currentEvents.forEach((event, index) => {
+            if (index === activeIndex) {
+              event.classList.add("active");
+            } else {
+              event.classList.remove("active");
+            }
+          });
+        }
+
+        // Function to attach read more listeners (for truncated descriptions)
+        function attachReadMoreListener(element) {
+          element.addEventListener("click", function () {
+            const descriptionElement = this.parentElement;
+            const fullDescription = timelineData.find((event) =>
+              event.description.startsWith(
+                descriptionElement.textContent.substring(0, 50)
+              )
+            ).description;
+
+            if (this.textContent === "Read more") {
+              descriptionElement.innerHTML =
+                fullDescription + ' <span class="read-more">Read less</span>';
+              attachReadMoreListener(
+                descriptionElement.querySelector(".read-more")
+              );
+            } else {
+              const truncatedDesc = fullDescription.substring(0, 150) + "...";
+              descriptionElement.innerHTML =
+                truncatedDesc + ' <span class="read-more">Read more</span>';
+              attachReadMoreListener(
+                descriptionElement.querySelector(".read-more")
+              );
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
